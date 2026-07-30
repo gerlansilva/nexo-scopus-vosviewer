@@ -128,6 +128,13 @@ def stable_article_id(path: Path) -> str:
 
 def extract_pdf_text(path: Path) -> tuple[str, list[str]]:
     reader = PdfReader(str(path))
+    if reader.is_encrypted:
+        try:
+            unlocked = reader.decrypt("")
+        except Exception as exc:
+            raise ValueError("PDF criptografado e não pôde ser desbloqueado") from exc
+        if not unlocked:
+            raise ValueError("PDF protegido por senha")
     pages = []
     for page in reader.pages:
         pages.append(page.extract_text() or "")
@@ -513,7 +520,23 @@ def extract_command(pdf_dir: Path, output_dir: Path, metadata_csv: Path | None) 
     extraction_audit = []
 
     for pdf in pdfs:
-        text, pages = extract_pdf_text(pdf)
+        try:
+            text, pages = extract_pdf_text(pdf)
+        except Exception as exc:
+            extraction_audit.append(
+                {
+                    "article_id": stable_article_id(pdf),
+                    "pdf_file": pdf.name,
+                    "pages": "",
+                    "processing_status": "error",
+                    "processing_error": str(exc),
+                    "reference_heading_found": "no",
+                    "references_segmented": 0,
+                    "references_ok": 0,
+                    "references_review": 0,
+                }
+            )
+            continue
         guessed = guess_article_metadata(pdf, pages)
         provided = supplied.get(pdf.name, {})
         guessed.update({key: value for key, value in provided.items() if value})
@@ -531,6 +554,8 @@ def extract_command(pdf_dir: Path, output_dir: Path, metadata_csv: Path | None) 
                 "article_id": article_id,
                 "pdf_file": pdf.name,
                 "pages": len(pages),
+                "processing_status": "ok",
+                "processing_error": "",
                 "reference_heading_found": "yes" if section else "no",
                 "references_segmented": len(blocks),
                 "references_ok": sum(
@@ -543,6 +568,13 @@ def extract_command(pdf_dir: Path, output_dir: Path, metadata_csv: Path | None) 
                 ),
             }
         )
+
+    if not article_rows:
+        details = "; ".join(
+            f"{row['pdf_file']}: {row['processing_error']}"
+            for row in extraction_audit
+        )
+        raise RuntimeError(f"Nenhum PDF pôde ser processado. {details}")
 
     article_columns = ["article_id", "pdf_file"] + [
         col for col in SCOPUS_COLUMNS if col != "References"
