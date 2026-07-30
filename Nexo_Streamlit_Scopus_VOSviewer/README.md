@@ -24,6 +24,15 @@ streamlit run app.py
 Não é necessário configurar chave de API. O processamento é feito durante a
 sessão e os arquivos temporários são eliminados ao final de cada etapa.
 
+## PDFs criptografados
+
+O projeto inclui `cryptography`, exigido pelo `pypdf` para abrir documentos
+protegidos com criptografia AES. Após atualizar `requirements.txt` no GitHub,
+reinicie o aplicativo para que a hospedagem reinstale as dependências.
+
+PDFs protegidos por senha ou corrompidos são listados individualmente na etapa
+de revisão. Os demais arquivos do corpus continuam sendo processados.
+
 ## Arquivos principais
 
 - `app.py`: interface e fluxo web;
