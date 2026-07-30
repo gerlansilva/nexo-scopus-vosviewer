@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
-  <title id="title">Nexo</title>
-  <desc id="desc">Quatro campos bibliográficos convergem em uma referência organizada.</desc>
-  <rect width="64" height="64" rx="17" fill="#17332F"/>
-  <path d="M16 17.5h15v8H16zM33 17.5h15v8H33zM16 27.8h15v8H16z" fill="#E8F0EB"/>
-  <path d="M33 27.8h15v8H33z" fill="#E66D50"/>
-  <path d="M20 43h24" stroke="#E8F0EB" stroke-width="4" stroke-linecap="round"/>
-  <path d="m27 36 5 7 5-7" fill="none" stroke="#E8F0EB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
