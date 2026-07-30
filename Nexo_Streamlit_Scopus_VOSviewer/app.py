@@ -220,7 +220,6 @@ header()
 st.markdown(
     """
     <section class="hero">
-      <div class="eyebrow">Do corpus bruto à base confiável</div>
       <p>Envie os artigos em PDF, revise apenas o que exige atenção e exporte
       uma base compatível com Scopus e VOSviewer. Cada obra permanece inteira,
       com todos os coautores.</p>
