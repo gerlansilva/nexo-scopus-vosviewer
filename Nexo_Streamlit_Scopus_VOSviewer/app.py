@@ -156,7 +156,10 @@ def df_to_csv_bytes(df: pd.DataFrame) -> bytes:
 
 
 def reset_project() -> None:
-    for key in ["articles_df", "review_df", "audit_df", "final_files", "source_names"]:
+    for key in [
+        "articles_df", "review_df", "audit_df", "final_files", "source_names",
+        "failed_pdfs",
+    ]:
         st.session_state.pop(key, None)
 
 
@@ -179,6 +182,11 @@ def extract_uploads(files) -> None:
         st.session_state.audit_df = pd.read_csv(
             output_dir / "auditoria_extracao.csv", dtype=str, keep_default_na=False
         )
+        audit = st.session_state.audit_df
+        st.session_state.failed_pdfs = audit.loc[
+            audit["processing_status"].eq("error"),
+            ["pdf_file", "processing_error"],
+        ].to_dict("records")
         st.session_state.source_names = [file.name for file in files]
         st.session_state.pop("final_files", None)
 
@@ -262,6 +270,15 @@ else:
 
     if "final_files" not in st.session_state:
         steps(2)
+        failed_pdfs = st.session_state.get("failed_pdfs", [])
+        if failed_pdfs:
+            st.warning(
+                f"{len(failed_pdfs)} PDF(s) não puderam ser lidos; "
+                "os demais foram processados normalmente."
+            )
+            with st.expander("Ver PDFs que exigem atenção"):
+                for item in failed_pdfs:
+                    st.write(f"**{item['pdf_file']}** — {item['processing_error']}")
         top_left, top_right = st.columns([4, 1])
         with top_left:
             st.subheader("Revisão do corpus")
@@ -381,4 +398,3 @@ else:
         if st.button("Processar outro corpus"):
             reset_project()
             st.rerun()
-
