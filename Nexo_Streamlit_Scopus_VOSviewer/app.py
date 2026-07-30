@@ -221,7 +221,6 @@ st.markdown(
     """
     <section class="hero">
       <div class="eyebrow">Do corpus bruto à base confiável</div>
-      <h1>Referências organizadas,<br>sem ruído no mapa.</h1>
       <p>Envie os artigos em PDF, revise apenas o que exige atenção e exporte
       uma base compatível com Scopus e VOSviewer. Cada obra permanece inteira,
       com todos os coautores.</p>
